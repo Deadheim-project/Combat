@@ -1,5 +1,4 @@
 ﻿using BepInEx;
-using UnityEngine;
 using BepInEx.Configuration;
 using HarmonyLib;
 using ServerSync;
@@ -23,7 +22,7 @@ namespace Combat
 
         public void Awake()
         {
-            BuffSeconds = config("Server config", "BuffSeconds", 300,
+            BuffSeconds = config("Server config", "BuffSeconds", 30,
                    new ConfigDescription("BuffSeconds", null));
 
             ActivateOnlyForPVP = config("Server config", "ActivateOnlyForPVP", false,

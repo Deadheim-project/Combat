@@ -4,17 +4,18 @@ using UnityEngine;
 
 namespace Combat
 {
-    [HarmonyPatch]
-    class Patches
+    public class Patches
     {
         [HarmonyPatch(typeof(Character), nameof(Character.ApplyDamage))]
         public static class ApplyDamage
         {
+            public static int combatHashCode = "Combat".GetStableHashCode();
+
             public static void Postfix(Character __instance, HitData hit)
             {
                 if (!hit.GetAttacker()) return;
 
-                StatusEffect debuff = ObjectDB.instance.GetStatusEffect("Combat");
+                StatusEffect debuff = ObjectDB.m_instance.GetStatusEffect(combatHashCode);
                 debuff.m_ttl = Combat.BuffSeconds.Value;
 
                 if (Combat.ActivateOnlyForPVP.Value)
@@ -27,14 +28,14 @@ namespace Combat
                 if (hit.GetAttacker().IsPlayer())
                 {
                     Player attacker = (Player)hit.GetAttacker();
-                    if (attacker.GetSEMan().HaveStatusEffect("Combat")) attacker.GetSEMan().RemoveStatusEffect("Combat");
+                    if (attacker.GetSEMan().HaveStatusEffect("Combat")) attacker.GetSEMan().RemoveStatusEffect(combatHashCode);
                     attacker.GetSEMan().AddStatusEffect(debuff);
                 }
 
                 if (__instance.IsPlayer())
                 {
                     Player damaged = (Player)__instance;
-                    if (damaged.GetSEMan().HaveStatusEffect("Combat")) damaged.GetSEMan().RemoveStatusEffect("Combat");
+                    if (damaged.GetSEMan().HaveStatusEffect("Combat")) damaged.GetSEMan().RemoveStatusEffect(combatHashCode);
                     damaged.GetSEMan().AddStatusEffect(debuff);
                 }
 
